@@ -3,6 +3,7 @@
 # takes a matrix object corresponding to a triad and 
 # outputs what type of triad it is.
 
+
 itpeval = function(tijk){
 	#for debugging:
 	#ijk = c(2,3,4)
@@ -21,7 +22,7 @@ itpeval = function(tijk){
 		# the 'which(condition, arr.ind=TRUE)' function returns the row x col 
 		# position in the matrix which meets the condition specified
 		# the sender is on the row and the reciever is on the column
-
+		
 		#islt=setdif(1:3,sndr||rcvr); is equivalent to:
 		islt = c(1:3)[!(1:3 %in% c(sndr,rcvr))]
 		pos[sndr]=2
@@ -37,7 +38,7 @@ itpeval = function(tijk){
 			if ((max(od)==2) & (max(.in)==1)){ #o21d 
 				sndr = which(od==2)
 				rcvr = c(1:3)[!(1:3 %in% sndr)] # note that setdiff(1:3,c(sndr,rcvr)) -- 2 ff's in setdiff! -- 
-												# would have also worked
+				# would have also worked
 				pos[sndr]=7
 				pos[rcvr[1]]=8
 				pos[rcvr[2]]=8
@@ -69,7 +70,7 @@ itpeval = function(tijk){
 	if(stijk==3){
 		m=(.5)*(sum(diag(tijk%*%tijk))) 
 		od = apply(tijk, 1, sum) #row sum
-
+		
 		if(m==1){
 			if(max(od)==1){
 				.in = apply(tijk, 2, sum) #col sum
@@ -103,7 +104,7 @@ itpeval = function(tijk){
 			} 		
 		} 	
 	} #stijk==3 
-
+	
 	if(stijk==4) {
 		m=(.5)*(sum(diag(tijk%*%tijk))) 
 		od = apply(tijk, 1, sum) #row sum
@@ -112,15 +113,15 @@ itpeval = function(tijk){
 			.in = apply(tijk, 2, sum) #col sum
 			if(min(od)==1 & min(.in)==0){
 #				/* #cat '120D' i j k tijk; */
-			sndr=which(.in==0)
-			rcvr=c(1:3)[!(1:3 %in% sndr)]
-			pos[sndr]=26
-			pos[rcvr[1]]=27
-			pos[rcvr[2]]=27
+				sndr=which(.in==0)
+				rcvr=c(1:3)[!(1:3 %in% sndr)]
+				pos[sndr]=26
+				pos[rcvr[1]]=27
+				pos[rcvr[2]]=27
 			} else if(min(od)==0 & min(.in)==1){
 #				/* #cat '120U' i j k tijk; */
 				rcvr=which(od==0)
-				sndr=c(1:3)[!(1:3 %in% sndr)]
+				sndr=c(1:3)[!(1:3 %in% rcvr)]
 				pos[rcvr]=28
 				pos[sndr[1]]=29
 				pos[sndr[2]]=29
@@ -133,7 +134,7 @@ itpeval = function(tijk){
 				pos[brdg]=31
 				pos[rcvr]=32 
 			} 			
-		# man=120
+			# man=120
 		}else{ #must be 201
 			brdg=which(od==2)
 			sndr=c(1:3)[!(1:3 %in% brdg)]
@@ -166,7 +167,7 @@ itpeval = function(tijk){
 
 triadcensus = function(g){
 	adjl = get.adjlist(g, mode = "all")
-
+	
 	#adjl=choose(adjl=.,0,adjl); is equivalent to:
 	adjl=ifelse(is.na(adjl),0,adjl)
 	# this deals with missing values, in SAS ".", which in R is "NA" 
@@ -183,7 +184,7 @@ triadcensus = function(g){
 		}
 		icont=adjl[[i]] # nodes that i sends to
 		icont = icont +1 #this corrects igraph's indexing of verteces from 0
-
+		
 		for(j in (i+1):(length(adjl)-1)){
 			#cat(ijk)
 			if(j %in% icont){  # if ego sends to alter
@@ -217,13 +218,13 @@ triadcensus = function(g){
 				icnt_gtj = icont*icnt_gtj
 				jcont = union(icnt_gtj,jcont)
 				jcont=setdiff(jcont,0)
-	
+				
 				if(length(jcont)>0){ #if jcont is not empty
 					#cat(c(i, j, jcont))
 					for(k in 1:length(jcont)){
 						ijk=c(i,j,jcont[k]) # this is causing an error
 						#cat(ijk)
-			
+						
 						submat = get.adjacency(g)[ijk,ijk]
 						# we return the adjacency matrix of the graph, and then 
 						# subset the matrix by rows i,j,k and columns i,j,k.
@@ -249,15 +250,16 @@ triadcensus = function(g){
 	
 	#define the column names:
 	colnames(itpm) = c("003", "012_S", "012_E", "012_I", "102_D", "102_I",
-						"021D_S", "021D_E", "021U_S", "021U_E", 
-						"021C_S", "021C_B", "021C_E", 
-						"111D_S", "111D_B", "111D_E",
-						"111U_S", "111U_B", "111U_E",
-						"030T_S", "030T_B", "030T_E",
-						"030C", "201_S", "201_B", 
-						"120D_S", "120D_E", "120U_E", "120U_S",
-						"120C_S", "120C_B", "120C_E",
-						"210_S", "210_B", "210_E", "300")
+			"021D_S", "021D_E", "021U_S", "021U_E", 
+			"021C_S", "021C_B", "021C_E", 
+			"111D_S", "111D_B", "111D_E",
+			"111U_S", "111U_B", "111U_E",
+			"030T_S", "030T_B", "030T_E",
+			"030C", "201_S", "201_B", 
+			"120D_S", "120D_E", "120U_E", "120U_S",
+			"120C_S", "120C_B", "120C_E",
+			"210_S", "210_B", "210_E", "300")
+	rownames(itpm) = V(g)$name
 	return(itpm)
 }
 
